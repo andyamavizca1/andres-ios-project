@@ -10,20 +10,26 @@ import RxSwift
 import RxCocoa
 
 class PokemonListViewModel {
-       let pokemons = PublishSubject<[Pokemon]>()
+    let pokemons = PublishSubject<[Pokemon]>()
+    let isLoading = BehaviorRelay<Bool>(value: false)
+    let error = PublishSubject<String>() // Or use `Error` type directly
 
-       private let disposeBag = DisposeBag()
+    private let disposeBag = DisposeBag()
 
-       func loadPokemons() {
-           PokemonService.shared.fetchPokemons()
-               .subscribe(
-                   onNext: { [weak self] fetchedPokemons in
-                       self?.pokemons.onNext(fetchedPokemons)
-                   },
-                   onError: { error in
-                       print("Error: \(error)")
-                   }
-               )
-               .disposed(by: disposeBag)
-       }
+    func loadPokemons() {
+        isLoading.accept(true)
+
+        PokemonService.shared.fetchPokemons()
+            .subscribe(
+                onNext: { [weak self] fetchedPokemons in
+                    self?.pokemons.onNext(fetchedPokemons)
+                    self?.isLoading.accept(false)
+                },
+                onError: { [weak self] err in
+                    self?.error.onNext("Error: \(err.localizedDescription)")
+                    self?.isLoading.accept(false)
+                }
+            )
+            .disposed(by: disposeBag)
+    }
 }
