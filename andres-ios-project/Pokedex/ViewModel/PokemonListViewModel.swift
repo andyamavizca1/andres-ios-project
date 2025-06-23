@@ -12,7 +12,7 @@ import RxCocoa
 class PokemonListViewModel {
     let pokemons = PublishSubject<[Pokemon]>()
     let isLoading = BehaviorRelay<Bool>(value: false)
-    let error = PublishSubject<String>() // Or use `Error` type directly
+    let error = PublishSubject<String>()
 
     private let disposeBag = DisposeBag()
 

@@ -25,6 +25,13 @@ class PokeListViewController: UIViewController {
         viewModel.loadPokemons()
         
         tableView.register(UINib(nibName: "PokeCellTableViewCell", bundle: nil), forCellReuseIdentifier: "PokeCellTableViewCell")
+        
+        tableView.rx.modelSelected(Pokemon.self)
+            .subscribe(onNext: { [weak self] pokemon in
+                self?.showPokemonDetail(for: pokemon)
+            })
+            .disposed(by: disposeBag)
+
     }
     
     private func setupBindings() {
@@ -34,8 +41,6 @@ class PokeListViewController: UIViewController {
         
         viewModel.pokemons
             .bind(to: tableView.rx.items(cellIdentifier: "PokeCellTableViewCell", cellType: PokeCellTableViewCell.self)) { (row, pokemon, cell) in
-                   // This closure is called for each cell.
-                   // It gives us the row number, the pokemon object for that row, and the cell.
                    cell.nameLabel.text = pokemon.name.capitalized
                }
                .disposed(by: disposeBag)
@@ -50,4 +55,18 @@ class PokeListViewController: UIViewController {
               .disposed(by: disposeBag)
 
     }
+    
+    
+    private func showPokemonDetail(for pokemon: Pokemon) {
+        guard let detailVC = storyboard?.instantiateViewController(withIdentifier: "PokemonDetailViewController") as? PokemonDetailViewController else {
+            fatalError("Error creating PokemonDetailViewController")
+        }
+
+        navigationController?.pushViewController(detailVC, animated: true)
+
+        if let selectedIndexPath = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: selectedIndexPath, animated: true)
+        }
+    }
+
 }
