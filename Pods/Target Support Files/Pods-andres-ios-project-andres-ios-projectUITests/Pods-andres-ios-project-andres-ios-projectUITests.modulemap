@@ -1,0 +1,6 @@
+framework module Pods_andres_ios_project_andres_ios_projectUITests {
+  umbrella header "Pods-andres-ios-project-andres-ios-projectUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}
