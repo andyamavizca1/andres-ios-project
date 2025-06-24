@@ -27,8 +27,6 @@ class PokemonDetailViewController: UIViewController {
 
           setupBindings()
           viewModel.loadPokemonDetail()
-        
-        print("Test did load")
     }
     
     
@@ -44,8 +42,6 @@ class PokemonDetailViewController: UIViewController {
                 self.typesLabel.text = detail.types
                     .map { $0.type.name }
                     .joined(separator: ", ")
-                
-                print("Image URL: \(detail.sprites.front_default)")
 
                 self.loadImage(from: detail.sprites.front_default)
             })

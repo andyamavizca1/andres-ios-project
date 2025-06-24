@@ -19,7 +19,7 @@ class PokeListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "Pokemon App"
+        title = "Pokélist"
         
         setupBindings()
         viewModel.loadPokemons()

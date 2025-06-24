@@ -34,7 +34,6 @@ class PokemonDetailViewModel {
         pokemonService.fetchPokemon(urlString: pokemon.url)
             .subscribe(
                 onNext: { [weak self] fetchedPokemonDetail in
-                    print("Fetched Detail: \(fetchedPokemonDetail)")
                     self?.pokemonDetail.onNext(fetchedPokemonDetail)
                     self?.isLoading.accept(false)
                 },
