@@ -20,7 +20,7 @@ class PokemonService {
 
     private init() {}
 
-    func fetchPokemons() -> Observable<[Pokemon]> {
+    func fetchPokemonList() -> Observable<[Pokemon]> {
         let urlString = "\(baseURL)/pokemon/?limit=20"
         guard let url = URL(string: urlString) else {
             return Observable.error(PokemonServiceError.invalidURL)
@@ -32,6 +32,23 @@ class PokemonService {
                 let pokemonResponse = try decoder.decode(PokemonListResponse.self, from: data)
                 return pokemonResponse.results
             } catch {
+                throw PokemonServiceError.decodingError(error)
+            }
+        }
+    }
+    
+    func fetchPokemon(urlString: String) -> Observable<PokemonDetail> {
+        guard let url = URL(string: urlString) else {
+            return Observable.error(PokemonServiceError.invalidURL)
+        }
+        
+        return URLSession.shared.rx.data(request: URLRequest(url: url)).map { data in
+            do {
+                let decoder = JSONDecoder()
+                let pokemonResponse = try decoder.decode(PokemonDetail.self, from: data)
+                return pokemonResponse
+            } catch {
+                print("Error: \(error)")
                 throw PokemonServiceError.decodingError(error)
             }
         }

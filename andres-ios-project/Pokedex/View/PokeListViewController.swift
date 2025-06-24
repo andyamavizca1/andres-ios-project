@@ -36,12 +36,14 @@ class PokeListViewController: UIViewController {
     
     private func setupBindings() {
         viewModel.isLoading
+               .observe(on: MainScheduler.instance)
                .bind(to: activityIndicator.rx.isAnimating)
                .disposed(by: disposeBag)
         
         viewModel.pokemons
             .bind(to: tableView.rx.items(cellIdentifier: "PokeCellTableViewCell", cellType: PokeCellTableViewCell.self)) { (row, pokemon, cell) in
                    cell.nameLabel.text = pokemon.name.capitalized
+
                }
                .disposed(by: disposeBag)
         
@@ -62,6 +64,8 @@ class PokeListViewController: UIViewController {
             fatalError("Error creating PokemonDetailViewController")
         }
 
+        detailVC.viewModel = PokemonDetailViewModel(pokemon: pokemon)
+        
         navigationController?.pushViewController(detailVC, animated: true)
 
         if let selectedIndexPath = tableView.indexPathForSelectedRow {

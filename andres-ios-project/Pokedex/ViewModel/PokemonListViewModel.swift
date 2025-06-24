@@ -15,11 +15,19 @@ class PokemonListViewModel {
     let error = PublishSubject<String>()
 
     private let disposeBag = DisposeBag()
+    
+    private let pokemonService: PokemonService
+    
+    init(pokemonService: PokemonService = PokemonService.shared) {
+     
+        self.pokemonService = pokemonService
+    }
+
 
     func loadPokemons() {
         isLoading.accept(true)
 
-        PokemonService.shared.fetchPokemons()
+        pokemonService.fetchPokemonList()
             .subscribe(
                 onNext: { [weak self] fetchedPokemons in
                     self?.pokemons.onNext(fetchedPokemons)
