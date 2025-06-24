@@ -21,17 +21,11 @@ class PokeListViewController: UIViewController {
 
         title = "Pokélist"
         
-        setupBindings()
-        viewModel.loadPokemons()
-        
         tableView.register(UINib(nibName: "PokeCellTableViewCell", bundle: nil), forCellReuseIdentifier: "PokeCellTableViewCell")
         
-        tableView.rx.modelSelected(Pokemon.self)
-            .subscribe(onNext: { [weak self] pokemon in
-                self?.showPokemonDetail(for: pokemon)
-            })
-            .disposed(by: disposeBag)
-
+        setupBindings()
+        
+        viewModel.initialLoad()
     }
     
     private func setupBindings() {
@@ -46,6 +40,21 @@ class PokeListViewController: UIViewController {
 
                }
                .disposed(by: disposeBag)
+        
+         tableView.rx.modelSelected(Pokemon.self)
+             .subscribe(onNext: { [weak self] pokemon in
+                 self?.showPokemonDetail(for: pokemon)
+             })
+             .disposed(by: disposeBag)
+             
+         tableView.rx.willDisplayCell
+             .subscribe(onNext: { [weak self] _, indexPath in
+                 guard let self = self else { return }
+                 if indexPath.row == self.viewModel.pokemons.value.count - 1 {
+                     self.viewModel.loadMore()
+                 }
+             })
+             .disposed(by: disposeBag)
         
         viewModel.error
               .observe(on: MainScheduler.instance)

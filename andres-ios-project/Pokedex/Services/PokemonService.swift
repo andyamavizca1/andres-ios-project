@@ -20,8 +20,8 @@ class PokemonService {
 
     private init() {}
 
-    func fetchPokemonList() -> Observable<[Pokemon]> {
-        let urlString = "\(baseURL)/pokemon/?limit=20"
+    func fetchPokemonList(limit: Int, offset: Int) -> Observable<PokemonListResponse> {
+        let urlString = "\(baseURL)/pokemon/?limit=\(limit)&offset=\(offset)"
         guard let url = URL(string: urlString) else {
             return Observable.error(PokemonServiceError.invalidURL)
         }
@@ -30,7 +30,7 @@ class PokemonService {
             do {
                 let decoder = JSONDecoder()
                 let pokemonResponse = try decoder.decode(PokemonListResponse.self, from: data)
-                return pokemonResponse.results
+                return pokemonResponse
             } catch {
                 throw PokemonServiceError.decodingError(error)
             }

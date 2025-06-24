@@ -6,6 +6,7 @@
 //
 
 struct PokemonListResponse: Codable {
+    let next: String?
     let results: [Pokemon]
 }
 
