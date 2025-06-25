@@ -18,7 +18,7 @@ class PokemonService {
     static let shared = PokemonService()
     private let baseURL = "https://pokeapi.co/api/v2"
 
-    private init() {}
+    init() {}
 
     func fetchPokemonList(limit: Int, offset: Int) -> Observable<PokemonListResponse> {
         let urlString = "\(baseURL)/pokemon/?limit=\(limit)&offset=\(offset)"
@@ -47,6 +47,23 @@ class PokemonService {
                 let decoder = JSONDecoder()
                 let pokemonResponse = try decoder.decode(PokemonDetail.self, from: data)
                 return pokemonResponse
+            } catch {
+                print("Error: \(error)")
+                throw PokemonServiceError.decodingError(error)
+            }
+        }
+    }
+    
+    func fetchAbility(urlString: String) -> Observable<AbilityApiResponse> {
+        guard let url = URL(string: urlString) else {
+            return Observable.error(PokemonServiceError.invalidURL)
+        }
+        
+        return URLSession.shared.rx.data(request: URLRequest(url: url)).map { data in
+            do {
+                let decoder = JSONDecoder()
+                let abilityResponse = try decoder.decode(AbilityApiResponse.self, from: data)
+                return abilityResponse
             } catch {
                 print("Error: \(error)")
                 throw PokemonServiceError.decodingError(error)

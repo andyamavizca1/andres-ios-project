@@ -18,22 +18,47 @@ struct Pokemon: Codable {
 struct PokemonDetail: Codable {
     let name: String
     let sprites: Sprites
-    let types: [TypeElement]
-    let abilities: [AbilityElement]
+    let types: [Types]
+    let abilities: [Abilities]
 }
 
 struct Sprites: Codable {
     let front_default: String
 }
 
-struct TypeElement: Codable {
-    let type: Species
+struct Types: Codable {
+    let type: PokemonType
 }
 
-struct AbilityElement: Codable {
-    let ability: Species
+struct Abilities: Codable {
+    let ability: PokemonAbility
 }
 
-struct Species: Codable {
+struct PokemonType: Codable {
     let name: String
+    let url: String
+}
+
+struct PokemonAbility: Codable {
+    let name: String
+    let url: String
+}
+
+struct AbilityApiResponse: Decodable {
+    let name: String
+    let effect_entries: [EffectEntry]
+}
+
+struct EffectEntry: Decodable {
+    let effect: String
+    let language: Language
+}
+
+struct Language: Decodable {
+    let name: String
+}
+
+struct AbilityDetail: Codable {
+    let name: String
+    let effect: String
 }
